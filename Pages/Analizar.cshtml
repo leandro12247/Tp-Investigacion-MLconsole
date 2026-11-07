@@ -1,0 +1,59 @@
+﻿@page
+@model MLconsole.Pages.AnalizarModel
+@{
+    ViewData["Title"] = "Analizar";
+}
+
+<h1 class="mb-4">Análisis de texto</h1>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <form method="post" class="card card-body shadow-sm">
+            <label asp-for="Texto" class="form-label fw-semibold">Texto a analizar</label>
+            <textarea asp-for="Texto" class="form-control" rows="5"
+                      placeholder="Escribí una frase..."></textarea>
+            <span asp-validation-for="Texto" class="text-danger"></span>
+            <button type="submit" class="btn btn-primary mt-3">Analizar</button>
+        </form>
+
+        @if (Model.Resultado is not null)
+        {
+            var positivo = Model.Resultado.Label == "Positivo";
+            var pct = (Model.Resultado.Confidence * 100).ToString("0");
+            <div class="card shadow-sm mt-3">
+                <div class="card-body">
+                    <span class="badge fs-6 @(positivo ? "bg-success" : "bg-danger")">
+                        @Model.Resultado.Label
+                    </span>
+                    <div class="progress mt-3">
+                        <div class="progress-bar @(positivo ? "bg-success" : "bg-danger")"
+                             style="width:@pct%">
+                            @pct%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-lg-6">
+        <h5>Últimas predicciones</h5>
+        <table class="table table-sm align-middle">
+            <thead><tr><th>Texto</th><th>Resultado</th><th>Fecha</th></tr></thead>
+            <tbody>
+                @foreach (var p in Model.Historial)
+                {
+                    <tr>
+                        <td>@p.Texto</td>
+                        <td>@p.Etiqueta (@((p.Confianza * 100).ToString("0"))%)</td>
+                        <td>@p.Fecha.ToLocalTime().ToString("dd/MM HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

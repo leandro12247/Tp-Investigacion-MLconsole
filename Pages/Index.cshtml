@@ -1,0 +1,42 @@
+﻿@page
+@model IndexModel
+@{ ViewData["Title"] = "Inicio"; }
+
+<div class="text-center py-5">
+    <h1 class="display-4 fw-bold">MLconsole</h1>
+    <p class="lead text-muted">
+        Análisis de sentimiento de textos con Machine Learning y ML.NET
+    </p>
+
+    <div class="mt-4">
+        <a class="btn btn-primary btn-lg me-2" asp-page="/Analizar">Analizar un texto</a>
+        <a class="btn btn-outline-secondary btn-lg" asp-page="/Dashboard">Ver estadísticas</a>
+    </div>
+</div>
+
+<div class="row g-4 mt-2">
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5>1. Escribí un texto</h5>
+                <p class="text-muted mb-0">Una reseña, un comentario o cualquier frase en inglés.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5>2. El modelo lo clasifica</h5>
+                <p class="text-muted mb-0">ML.NET predice si el sentimiento es positivo o negativo.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5>3. Mirá los resultados</h5>
+                <p class="text-muted mb-0">Cada análisis se guarda y se refleja en el dashboard.</p>
+            </div>
+        </div>
+    </div>
+</div>

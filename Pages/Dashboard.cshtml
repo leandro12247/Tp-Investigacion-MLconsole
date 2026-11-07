@@ -1,0 +1,90 @@
+﻿@page
+@model MLconsole.Pages.DashboardModel
+@{ ViewData["Title"] = "Dashboard"; }
+
+<h1 class="mb-4">Dashboard</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <div class="text-muted small">Total de análisis</div>
+                <div class="fs-2 fw-bold">@Model.Total</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <div class="text-muted small">Positivos</div>
+                <div class="fs-2 fw-bold text-success">@Model.Positivos</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <div class="text-muted small">Negativos</div>
+                <div class="fs-2 fw-bold text-danger">@Model.Negativos</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <div class="text-muted small">Confianza promedio</div>
+                <div class="fs-2 fw-bold">@Model.ConfianzaPromedio.ToString("0")%</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Positivos vs. negativos</h5>
+                <canvas id="graficoSentimiento"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Análisis por día (últimos 7 días)</h5>
+                <canvas id="graficoDias"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script>
+        new Chart(document.getElementById('graficoSentimiento'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Positivo', 'Negativo'],
+                datasets: [{
+                    data: [@Model.Positivos, @Model.Negativos],
+                    backgroundColor: ['#198754', '#dc3545']
+                }]
+            }
+        });
+
+        new Chart(document.getElementById('graficoDias'), {
+            type: 'bar',
+            data: {
+                labels: @Json.Serialize(Model.Dias),
+                datasets: [{
+                    label: 'Análisis',
+                    data: @Json.Serialize(Model.PorDia),
+                    backgroundColor: '#0d6efd'
+                }]
+            },
+            options: {
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+    </script>
+}
