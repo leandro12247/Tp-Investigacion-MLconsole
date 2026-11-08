@@ -15,8 +15,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddRazorPages();
 
-// Servicio de predicción (temporal: se cambia por el modelo real más adelante)
-builder.Services.AddSingleton<IPredictionService, FakePredictionService>();
+// Servicio de predicción usando ML.NET
+builder.Services.AddSingleton<IPredictionService, MLNetPredictionService>();
 
 var app = builder.Build();
 
