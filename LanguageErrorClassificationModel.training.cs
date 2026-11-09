@@ -14,7 +14,7 @@ namespace MLconsole
 {
     public partial class LanguageErrorClassificationModel
     {
-        public const string RetrainFilePath =  @"C:\Users\Leandro\source\repos\Tp-Investigacion-MLconsole\simple_training.csv";
+        public const string RetrainFilePath =  @"C:\Users\Leandro\source\repos\Tp-Investigacion-MLconsole\training_simple_v2.csv";
         public const char RetrainSeparatorChar = '	';
         public const bool RetrainHasHeader =  false;
         public const bool RetrainAllowQuoting =  false;
@@ -93,7 +93,7 @@ namespace MLconsole
             var pipeline = mlContext.Transforms.Text.FeaturizeText(inputColumnName:@"col0",outputColumnName:@"col0")      
                                     .Append(mlContext.Transforms.Concatenate(@"Features", new []{@"col0"}))      
                                     .Append(mlContext.Transforms.Conversion.MapValueToKey(outputColumnName:@"col1",inputColumnName:@"col1",addKeyValueAnnotationsAsText:false))      
-                                    .Append(mlContext.MulticlassClassification.Trainers.OneVersusAll(binaryEstimator:mlContext.BinaryClassification.Trainers.FastTree(new FastTreeBinaryTrainer.Options(){NumberOfLeaves=4,MinimumExampleCountPerLeaf=22,NumberOfTrees=4,MaximumBinCountPerFeature=116,FeatureFraction=0.9739946631895845,LearningRate=0.53870217005307,LabelColumnName=@"col1",FeatureColumnName=@"Features",DiskTranspose=false}),labelColumnName: @"col1"))      
+                                    .Append(mlContext.MulticlassClassification.Trainers.OneVersusAll(binaryEstimator:mlContext.BinaryClassification.Trainers.FastTree(new FastTreeBinaryTrainer.Options(){NumberOfLeaves=7,MinimumExampleCountPerLeaf=8,NumberOfTrees=7,MaximumBinCountPerFeature=201,FeatureFraction=0.9836223280347735,LearningRate=0.7671506509466648,LabelColumnName=@"col1",FeatureColumnName=@"Features",DiskTranspose=false}),labelColumnName: @"col1"))      
                                     .Append(mlContext.Transforms.Conversion.MapKeyToValue(outputColumnName:@"PredictedLabel",inputColumnName:@"PredictedLabel"));
 
             return pipeline;

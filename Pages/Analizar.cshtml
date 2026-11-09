@@ -4,14 +4,14 @@
     ViewData["Title"] = "Analizar";
 }
 
-<h1 class="mb-4">Análisis de texto</h1>
+<h1 class="mb-4">Análisis de Codigo</h1>
 
 <div class="row g-4">
     <div class="col-lg-6">
         <form method="post" class="card card-body shadow-sm">
-            <label asp-for="Texto" class="form-label fw-semibold">Texto a analizar</label>
+            <label asp-for="Texto" class="form-label fw-semibold">Codigo a analizar</label>
             <textarea asp-for="Texto" class="form-control" rows="5"
-                      placeholder="Escribí una frase..."></textarea>
+                      placeholder="Ingresa linea o bloque de codigo..."></textarea>
             <span asp-validation-for="Texto" class="text-danger"></span>
             <button type="submit" class="btn btn-primary mt-3">Analizar</button>
         </form>
