@@ -9,31 +9,47 @@
 <div class="row g-4">
     <div class="col-lg-6">
         <form method="post" class="card card-body shadow-sm">
-            <label asp-for="Texto" class="form-label fw-semibold">Codigo a analizar</label>
-            <textarea asp-for="Texto" class="form-control" rows="5"
-                      placeholder="Ingresa linea o bloque de codigo..."></textarea>
+            <label class="form-label fw-semibold">Codigo a analizar</label>
+
+            <!-- Acá se dibuja Monaco -->
+            <div id="monaco-container"
+                 style="height: 220px; border: 1px solid #dee2e6; border-radius: .375rem;"></div>
+
+            <!-- El textarea original queda oculto y es el que viaja al servidor -->
+            <textarea asp-for="Texto" id="codigo-textarea" class="d-none"></textarea>
             <span asp-validation-for="Texto" class="text-danger"></span>
-            <button type="submit" class="btn btn-primary mt-3">Analizar</button>
+
+            <div class="d-flex gap-2 mt-3">
+                <button type="submit" class="btn btn-primary flex-fill">Analizar</button>
+                <button type="submit"
+                        asp-page-handler="Reset"
+                        formnovalidate
+                        class="btn btn-outline-secondary flex-fill"
+                        onclick="return confirm('¿Borrar el análisis y las últimas predicciones?');">
+                    Resetear
+                </button>
+            </div>
         </form>
 
         @if (Model.Resultado is not null)
-        {
-            var positivo = Model.Resultado.Label == "Positivo";
-            var pct = (Model.Resultado.Confidence * 100).ToString("0");
-            <div class="card shadow-sm mt-3">
-                <div class="card-body">
-                    <span class="badge fs-6 @(positivo ? "bg-success" : "bg-danger")">
-                        @Model.Resultado.Label
-                    </span>
-                    <div class="progress mt-3">
-                        <div class="progress-bar @(positivo ? "bg-success" : "bg-danger")"
-                             style="width:@pct%">
-                            @pct%
-                        </div>
-                    </div>
+{
+    var correcto = Model.Resultado.Label == "Sin Error";
+    var texto = correcto ? "Correcto" : "Con Error";
+    var pct = (Model.Resultado.Confidence * 100).ToString("0");
+    <div class="card shadow-sm mt-3">
+        <div class="card-body">
+            <span class="badge fs-6 @(correcto ? "bg-success" : "bg-danger")">
+                @texto
+            </span>
+            <div class="progress mt-3">
+                <div class="progress-bar @(correcto ? "bg-success" : "bg-danger")"
+                     style="width:@pct%">
+                    @pct%
                 </div>
             </div>
-        }
+        </div>
+    </div>
+}
     </div>
 
     <div class="col-lg-6">
@@ -42,13 +58,14 @@
             <thead><tr><th>Texto</th><th>Resultado</th><th>Fecha</th></tr></thead>
             <tbody>
                 @foreach (var p in Model.Historial)
-                {
-                    <tr>
-                        <td>@p.Texto</td>
-                        <td>@p.Etiqueta (@((p.Confianza * 100).ToString("0"))%)</td>
-                        <td>@p.Fecha.ToLocalTime().ToString("dd/MM HH:mm")</td>
-                    </tr>
-                }
+{
+    var ok = p.Etiqueta == "Sin Error";
+    <tr>
+        <td>@p.Texto</td>
+        <td>@(ok ? "Correcto" : "Con Error") (@((p.Confianza * 100).ToString("0"))%)</td>
+        <td>@p.Fecha.ToLocalTime().ToString("dd/MM HH:mm")</td>
+    </tr>
+}
             </tbody>
         </table>
     </div>
@@ -56,4 +73,31 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
+    <script>
+        require.config({
+            paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs' }
+        });
+
+        require(['vs/editor/editor.main'], function () {
+            const textarea = document.getElementById('codigo-textarea');
+
+            const editor = monaco.editor.create(document.getElementById('monaco-container'), {
+                value: textarea.value,       // conserva el texto si la página se recarga
+                language: 'csharp',
+                theme: 'vs-dark',
+                automaticLayout: true,
+                minimap: { enabled: false },
+                fontSize: 14,
+                scrollBeyondLastLine: false,
+                placeholder: 'Ingresa linea o bloque de codigo...'
+            });
+
+            // Antes de enviar el form (Analizar o Resetear), pasamos el contenido al textarea
+            textarea.form.addEventListener('submit', function () {
+                textarea.value = editor.getValue();
+            });
+        });
+    </script>
 }

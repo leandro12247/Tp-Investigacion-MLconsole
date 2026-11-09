@@ -55,6 +55,18 @@ public class AnalizarModel : PageModel
         return Page();
     }
 
+    // NUEVO: botón Resetear
+    public async Task<IActionResult> OnPostResetAsync()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+        await _db.Predicciones
+            .Where(p => p.UsuarioId == userId)
+            .ExecuteDeleteAsync();
+
+        return RedirectToPage();   // GET limpio: sin texto, sin resultado, sin historial
+    }
+
     private async Task CargarHistorial()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
